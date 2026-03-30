@@ -1,73 +1,102 @@
-# React + TypeScript + Vite
+# Lost & Found
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight web application that allows users to report and browse lost and found items. Built with React, TypeScript, and Vite.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Browse Items** — View all reported lost and found items with their status, description, and submission date
+- **Report an Item** — Submit a new lost, found, or returned item through a simple form
+- **Status Tracking** — Each item is tagged as `Lost`, `Found`, or `Returned`
+- **Mock Service Layer** — Fully functional with an in-memory mock backend, ready to swap in a real API
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 19** — Component-based UI
+- **TypeScript** — Type-safe throughout
+- **Vite** — Fast development server and build tool
+- **React Router v7** — Client-side page routing
 
-## Expanding the ESLint configuration
+## Project Structure
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── pages/
+│   ├── Items.tsx        # Browse all approved items
+│   └── ItemNew.tsx      # Submit a new item form
+├── lib/
+│   ├── service.ts           # Service interface & type definitions
+│   ├── service.mock.ts      # In-memory mock implementation
+│   └── service.factory.ts   # Swaps mock vs real service based on environment
+└── App.tsx              # Root component
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+
+- npm
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/Chynaadams1/Lost-and-found.git
+cd Lost-and-found
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
 ```
+
+Open [http://localhost:5173](http://localhost:5173) in your browser.
+
+## Available Scripts
+
+| Command | Description |
+|---|---|
+| `npm run dev` | Start local development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint checks |
+
+## How the Service Layer Works
+
+The app uses a service factory pattern that makes it easy to swap between a mock backend and a real API without changing any component code.
+
+The `service.factory.ts` file exports whichever service implementation is active. Right now it uses `mockService`, which stores items in memory and simulates async network delays. To connect a real backend, implement the `LostFoundService` interface and update the factory to export it.
+
+```ts
+export interface LostFoundService {
+  listApprovedItems(): Promise<Item[]>;
+  createItem(input: { title: string; description?: string; status: Status }): Promise<Item>;
+}
+```
+
+## Item Data Shape
+
+```ts
+type Item = {
+  id: string;
+  title: string;
+  description: string | null;
+  status: 'Lost' | 'Found' | 'Returned';
+  created_at: string;
+};
+```
+
+## Future Improvements
+
+- Connect to a real backend API (FastAPI or Django REST Framework)
+- Add image upload support for lost/found items
+- Add search and filter by status
+- Add admin approval workflow before items appear publicly
+- Add user authentication so people can track their own submissions
+
+## Author
+
+**Chyna Adams**
+- GitHub: [github.com/Chynaadams1](https://github.com/Chynaadams1)
+- LinkedIn: [linkedin.com/in/chynaadams](https://linkedin.com/in/chynaadams)
